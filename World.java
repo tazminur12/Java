@@ -1,6 +1,7 @@
 import java.util.*;
 import java.io.*;
 
+// Abstract base class
 abstract class Being {
     private static int idCounter = 1;
     private int id;
@@ -15,6 +16,7 @@ abstract class Being {
         this.food = food;
     }
 
+    // Getters
     public int getId() {
         return id;
     }
@@ -31,6 +33,7 @@ abstract class Being {
         return food;
     }
 
+    // Setters
     public void setName(String name) {
         this.name = name;
     }
@@ -43,11 +46,11 @@ abstract class Being {
         this.food = food;
     }
 
+    // Abstract method to describe the being
     public abstract void describe();
 }
 
-// ---------------- Human Classes ----------------
-
+// ---------------- HUMAN ----------------
 class Human extends Being {
     private String region;
 
@@ -71,8 +74,7 @@ class Human extends Being {
     }
 }
 
-// ---------------- Animal Classes ----------------
-
+// ---------------- ANIMAL ----------------
 class Animal extends Being {
     public Animal(String name, String habitat, String food) {
         super(name, habitat, food);
@@ -85,8 +87,7 @@ class Animal extends Being {
     }
 }
 
-// ---------------- Bird Classes ----------------
-
+// ---------------- BIRD ----------------
 class Bird extends Being {
     public Bird(String name, String habitat, String food) {
         super(name, habitat, food);
@@ -99,8 +100,7 @@ class Bird extends Being {
     }
 }
 
-// ---------------- Main World Class ----------------
-
+// ---------------- MAIN CLASS ----------------
 public class World {
     static ArrayList<Being> beings = new ArrayList<>();
     static Scanner scanner = new Scanner(System.in);
@@ -116,10 +116,12 @@ public class World {
             System.out.println("4. Show All Beings");
             System.out.println("5. Save to File");
             System.out.println("6. Exit");
+            System.out.println("7. Search by ID");
+            System.out.println("8. Delete by ID");
 
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // consume newline
+            scanner.nextLine(); // clear buffer
 
             switch (choice) {
                 case 1 -> addHuman();
@@ -131,6 +133,8 @@ public class World {
                     running = false;
                     System.out.println("Exiting World...");
                 }
+                case 7 -> searchById();
+                case 8 -> deleteById();
                 default -> System.out.println("Invalid option.");
             }
         }
@@ -189,7 +193,7 @@ public class World {
         }
     }
 
-    // Save to File
+    // Save to file
     private static void saveToFile() {
         try (PrintWriter writer = new PrintWriter("beings.txt")) {
             for (Being b : beings) {
@@ -203,5 +207,40 @@ public class World {
         } catch (IOException e) {
             System.out.println("❌ Error saving to file: " + e.getMessage());
         }
+    }
+
+    // Search by ID
+    private static void searchById() {
+        System.out.print("Enter ID to search: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        for (Being b : beings) {
+            if (b.getId() == id) {
+                System.out.println("✅ Being Found:");
+                b.describe();
+                return;
+            }
+        }
+        System.out.println("❌ No being found with ID " + id);
+    }
+
+    // Delete by ID
+    private static void deleteById() {
+        System.out.print("Enter ID to delete: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        Iterator<Being> iterator = beings.iterator();
+        while (iterator.hasNext()) {
+            Being b = iterator.next();
+            if (b.getId() == id) {
+                iterator.remove();
+                System.out.println("🗑️ Being with ID " + id + " deleted.");
+                return;
+            }
+        }
+
+        System.out.println("❌ No being found with ID " + id);
     }
 }
